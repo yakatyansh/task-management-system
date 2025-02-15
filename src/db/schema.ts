@@ -1,3 +1,4 @@
+import { Many, relations } from "drizzle-orm";
 import { pgTable, serial, text, integer, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -31,3 +32,19 @@ export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   name: text("name").unique().notNull(),
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  projects: many(projects),
+  tasks: many(tasks),
+}));
+
+export const projectsRelations = relations(projects, ({ one, many }) => ({
+  user: one(users, { fields: [projects.userId], references: [users.id] }),
+  tasks: many(tasks),
+}));
+
+export const tasksRelations = relations(tasks, ({ one }) => ({
+  user: one(users, { fields: [tasks.userId], references: [users.id] }),
+  project: one(projects, { fields: [tasks.projectId], references: [projects.id] }),
+}));
+

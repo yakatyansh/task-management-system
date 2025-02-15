@@ -10,7 +10,7 @@ config();
 const pool = new Pool({
   host: "localhost",
   port: 5433, // Your PostgreSQL port (from Postgres.app)
-  user: "yaskatyan", // Replace with your actual macOS username
+  user: "yashkatyan", // Replace with your actual macOS username
   password: "password", // Leave empty if no password is set
   database: "taskmanagement", // Your database name
 });

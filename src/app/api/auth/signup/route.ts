@@ -1,28 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/index";
 import { users } from "@/db/schema";
-import { comparePasswords, generateToken } from "@/lib/auth";
+import { hashpassword } from "@/lib/auth";
+import { eq } from "drizzle-orm"; // Import eq() for filtering queries
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    // Find the user
-    const user = await db.select().from(users).where(users.email.equals(email)).limit(1);
-    if (user.length === 0) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    // Check if user already exists
+    const existingUser = await db.select().from(users).where(eq(users.email, email));
+    if (existingUser.length > 0) {
+      return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
-    // Compare password
-    const isMatch = await comparePasswords(password, user[0].passwordHash);
-    if (!isMatch) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-    }
+    // Hash the password and create the user
+    const hashedPassword = await hashpassword(password);
+    await db.insert(users).values({ email, passwordHash: hashedPassword });
 
-    // Generate JWT token
-    const token = generateToken(user[0].id);
-
-    return NextResponse.json({ token, message: "Login successful" }, { status: 200 });
+    return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
