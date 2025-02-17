@@ -23,6 +23,7 @@ export const tasks = pgTable("tasks", {
   priority: integer("priority").default(1),
   dueDate: timestamp("due_date"),
   projectId: integer("project_id").references(() => projects.id),
+  categoryId: integer("category_id").references(() => categories.id),
   userId: integer("user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   isCompleted: boolean("is_completed").default(false),
@@ -31,11 +32,13 @@ export const tasks = pgTable("tasks", {
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   name: text("name").unique().notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects),
   tasks: many(tasks),
+  categories: many(categories)
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -46,5 +49,10 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
 export const tasksRelations = relations(tasks, ({ one }) => ({
   user: one(users, { fields: [tasks.userId], references: [users.id] }),
   project: one(projects, { fields: [tasks.projectId], references: [projects.id] }),
+  category: one(categories, { fields: [tasks.categoryId], references: [categories.id] }),
 }));
 
+export const categoriesRelations = relations(categories, ({ one, many }) => ({
+  user: one(users, { fields: [categories.userId], references: [users.id] }),
+  tasks: many(tasks),
+}));
