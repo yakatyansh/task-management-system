@@ -4,6 +4,29 @@ import { tasks } from "@/db/schema";
 import { verifyToken } from "@/lib/auth";
 import { and, eq, ilike, gte, lte, desc, asc } from "drizzle-orm";
 
+
+export async function POST(req: NextRequest) {
+  try {
+    const { title, description, priority, status } = await req.json();
+    
+    if (!title) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+    const newTask = await db.insert(tasks).values({
+      title,
+      description: description || "",
+      priority: priority || 1,
+      status: status || "pending",
+    }).returning();
+
+    return NextResponse.json({ message: "Task created successfully", task: newTask }, { status: 201 });
+  }catch (error) {
+    console.error("❌ Error in Task Creation:", error);
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  }
+}
+  
+
 export async function GET(req: NextRequest) {
   try {
     // Authenticate user
