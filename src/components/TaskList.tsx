@@ -35,7 +35,7 @@ export default function TaskList() {
 
   return (
     <div>
-      <button onClick={() => { setShowForm(true); setSelectedTask(null); }} className="bg-green-500 text-white p-2 rounded mb-4">
+      <button onClick={() => { setShowForm(true); setSelectedTask(null); }} className="bg-green-500 text-black p-2 rounded mb-4">
         + Add Task
       </button>
 
@@ -44,7 +44,7 @@ export default function TaskList() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {tasks.map((task: any) => (
           <div key={task.id} className="bg-white p-4 shadow rounded">
-            <h3 className="font-bold">{task.title}</h3>
+            <h3 className="font-bold text-blue-800">{task.title}</h3>
             <p className="text-sm text-gray-500">{task.description}</p>
             <p className="text-xs text-blue-500">Priority: {task.priority}</p>
             <div className="flex gap-2 mt-2">
