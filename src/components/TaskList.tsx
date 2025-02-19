@@ -23,9 +23,10 @@ export default function TaskList() {
       await axios.delete(`/api/tasks/${id}`, {
         headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTczOTg5OTgzNywiZXhwIjoxNzQwNTA0NjM3fQ._AP1NqznaI3mt-e5xXcNKjj1-QwMB2MX46FSEdB38tw` },
       });
-      queryClient.invalidateQueries({ queryKey: ["tasks"] }); // Refresh tasks
+  
+      queryClient.invalidateQueries({ queryKey: ["tasks"] }); // Refresh task list
     } catch (error) {
-      console.error("Delete error:", error);
+      console.error("❌ Error deleting task:", error);
     }
   };
 
